@@ -37,5 +37,15 @@ app.post('/api/v1/items', (request, response) => {
     });
 });
 
+app.delete('/api/v1/items/:id', (request, response) => {
+  const { id } = request.params;
+
+  database('items').where('id', id).del()
+    .then(() => {
+      response.status(202).json({
+        'id': id
+      });
+    });
+});
 
 module.exports = app;

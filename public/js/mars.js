@@ -29,7 +29,7 @@ const fetchItems = async () => {
           <button class="delete-card">Delete</button>
         </div>
         <div class="item-card-b">
-          <input type="checkbox" value="packed" ${ packed ? "checked" : ""} />
+          <input class="item-packed" type="checkbox" value="packed" ${ packed ? "checked" : ""} />
           <label for="packed">Packed</label>
         </div>
       </div>
@@ -50,14 +50,14 @@ const fetchLastItem = async () => {
         <button class="delete-card">Delete</button>
       </div>
       <div class="item-card-b">
-        <input type="checkbox" value="packed"/>
+        <input class="item-packed" type="checkbox" value="packed"/>
         <label for="packed">Packed</label>
       </div>
     </div>
   `)
 };
 
-const deleteItem = function () {
+const deleteItem = function() {
   const itemId = this.closest('.item-card').classList[1].split('-')[1];
   const url = `/api/v1/items/${itemId}`;
   const options = {
@@ -70,10 +70,23 @@ const deleteItem = function () {
   this.closest('.item-card').remove();
 }
 
+const packedToggle = function() {
+  const itemId = this.closest('.item-card').classList[1].split('-')[1];
+  const url = `/api/v1/items/${itemId}`;
+  const options = {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ packed: `${$(this).is(':checked')}`})
+  }
+
+  fetch(url, options)
+}
+
 const buttonToggle = () => $('.pack-it-button').prop('disabled', !($('.pack-it-input').val()));
 
 $('.pack-it-input').on('keypress', buttonToggle);
 $('.pack-it-button').on('click', packIt);
 $('.item-container').on('click', '.delete-card', deleteItem);
+$('.item-container').on('click', '.item-packed', packedToggle);
 
 fetchItems();

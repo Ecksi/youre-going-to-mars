@@ -27,3 +27,45 @@ describe('CLIENT routes', () => {
       });
   });
 });
+
+describe('API routes', () => {
+
+  beforeEach(done => {
+    knex.migrate.rollback()
+      .then(() => {
+        knex.migrate.latest()
+          .then(() => {
+            return knex.seed.run()
+              .then(() => done());
+          });
+      });
+  });
+
+  describe('GET /api/v1/items', () => {
+    it('should return an array of all items', done => {
+      chai.request(server)
+        .get('/api/v1/items')
+        .end((error, response) => {
+          response.should.have.status(200);
+          response.should.be.json;
+          response.should.be.a('object');
+          response.body.length.should.equal(3);
+          response.body[0].should.have.property('name');
+          response.body[0].name.should.equal('Water');
+          response.body[0].should.have.property('packed');
+          response.body[0].packed.should.equal(false);
+          done();
+        });
+    });
+
+    it('should return a status of 404 if the wrong route is given', done => {
+      chai.request(server)
+        .get('/api/v1/itemzzz')
+        .end((error, response) => {
+          response.should.have.status(404);
+          done();
+        });
+    });
+  });
+
+});

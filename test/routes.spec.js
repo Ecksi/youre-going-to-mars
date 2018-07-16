@@ -68,6 +68,22 @@ describe('API routes', () => {
     });
   });
 
+  describe('GET /api/v1/items/:id', () => {
+    it('should return an array of one item', done => {
+      chai.request(server)
+        .get('/api/v1/items/3')
+        .end((error, response) => {
+          response.should.have.status(200);
+          response.should.be.json;
+          response.body.should.be.a('array');
+          response.body.length.should.equal(1);
+          response.body[0].should.have.property('name');
+          response.body[0].name.should.equal('Dirt');
+          done();
+        });
+    });
+  });
+
   describe('POST /api/v1/items', () => {
     it('should post a new item to the database', done => {
       chai.request(server)

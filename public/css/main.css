@@ -1,0 +1,27 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-size: 10px;
+}
+
+header {
+  border-bottom: 1px inset black;
+  margin: auto;
+  padding-bottom: 5em;
+  text-align: center;
+  width: 70%;
+}
+
+header form {
+  margin-top: 2em;
+}
+
+header input {
+  padding: 0.5em;
+}
+
+header button {
+  padding: 0.5em;
+}

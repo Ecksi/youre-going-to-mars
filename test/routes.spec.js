@@ -82,4 +82,22 @@ describe('API routes', () => {
         });
     });
   });
+
+  describe('PUT /api/v1/items/:id', () => {
+    it('should update the status of packed', done => {
+      chai.request(server)
+        .put('/api/v1/items/2')
+        .send({ packed: true })
+        .end((error, response) => {
+          response.should.have.status(201);
+
+          chai.request(server)
+            .get('/api/v1/items')
+            .end((error, response) => {
+              response.body[2].packed.should.equal(true);
+              done();
+            });
+        });
+    });
+  });
 });

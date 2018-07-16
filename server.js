@@ -14,20 +14,15 @@ app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });
 
-// endpoints
-// api/v1/items => GET POST
-// api/v1/items/:id => PUT DELETE
-
 app.get('/api/v1/items', (request, response) => {
-  database('items')
-    .select()
+  database('items').select()
     .then(exchanges => response.status(200).json(exchanges))
     .catch(error => response.status(500).json({ error }));
 });
 
 app.post('/api/v1/items', (request, response) => {
   const { name } = request.body;
-// add 422 for missing fields
+
   database('items').insert({ name: name }, 'id')
     .then(item => {
       response.status(201).json({ id: item[0] });
@@ -37,15 +32,21 @@ app.post('/api/v1/items', (request, response) => {
     });
 });
 
+app.put('/api/v1/items/:id', (request, response) => {
+  const { id } = request.params;
+  const { packed } = request.body;
+
+  database('items').select().where({ id })
+    .update('packed', packed)
+    .then(packed => response.status(201).json(packed))
+    .catch(error => response.status(500).json({ error }));
+});
+
 app.delete('/api/v1/items/:id', (request, response) => {
   const { id } = request.params;
 
   database('items').where('id', id).del()
-    .then(() => {
-      response.status(202).json({
-        'id': id
-      });
-    });
+    .then(() => response.status(202).json({'id': id}));
 });
 
 module.exports = app;

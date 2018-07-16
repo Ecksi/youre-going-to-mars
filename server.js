@@ -18,11 +18,23 @@ app.listen(app.get('port'), () => {
 // api/v1/items => GET POST
 // api/v1/items/:id => PUT DELETE
 
-app.get('/api/v1/items', (req, res) => {
+app.get('/api/v1/items', (request, response) => {
   database('items')
     .select()
-    .then(exchanges => res.status(200).json(exchanges))
-    .catch(error => res.status(500).json({ error }));
+    .then(exchanges => response.status(200).json(exchanges))
+    .catch(error => response.status(500).json({ error }));
+});
+
+app.post('/api/v1/items', (request, response) => {
+  const { name } = request.body;
+// add 422 for missing fields
+  database('items').insert({ name: name }, 'id')
+    .then(item => {
+      response.status(201).json({ id: item[0] });
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
 });
 
 

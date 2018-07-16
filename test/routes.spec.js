@@ -97,6 +97,18 @@ describe('API routes', () => {
           done();
         });
     });
+
+    it('should return an empty array if the id for the item was not found', done => {
+      chai.request(server)
+        .get('/api/v1/items/193934')
+        .end((error, response) => {
+          response.should.have.status(200);
+          response.should.be.json;
+          response.body.should.be.a('array');
+          response.body.length.should.equal(0);
+          done();
+        });
+    });
   });
 
   describe('PUT /api/v1/items/:id', () => {

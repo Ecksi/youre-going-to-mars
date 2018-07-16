@@ -100,4 +100,30 @@ describe('API routes', () => {
         });
     });
   });
+
+  describe('DELETE /api/v1/items/:id', () => {
+    it('should delete an item from the database', done => {
+      chai.request(server)
+        .get('/api/v1/items')
+        .end((error, response) => {
+          response.body.length.should.equal(3);
+
+          chai.request(server)
+            .delete('/api/v1/items/3')
+            .end((error, response) => {
+              response.should.have.status(202);
+              response.type.should.equal('application/json');
+              response.body.should.have.property('id');
+              response.body.id.should.equal('3');
+
+              chai.request(server)
+                .get('/api/v1/items')
+                .end((error, response) => {
+                  response.body.length.should.equal(2);
+                  done();
+                });
+            });
+        });
+    });
+  });
 });

@@ -23,7 +23,7 @@ const fetchItems = async () => {
 
   items.forEach(({name, packed, id}) => {
     $('.item-container').prepend(`
-      <div class="item-card" id="item-${id}">
+      <div class="item-card item-${id}">
         <div class="item-card-a">
           <h3>${name}</h3>
           <button class="delete-card">Delete</button>
@@ -44,7 +44,7 @@ const fetchLastItem = async () => {
   const lastItem = items[items.length - 1];
 
   $('.item-container').prepend(`
-    <div class="item-card" id="item-${lastItem.id}">
+    <div class="item-card item-${lastItem.id}">
       <div class="item-card-a">
         <h3>${lastItem.name}</h3>
         <button class="delete-card">Delete</button>
@@ -57,9 +57,23 @@ const fetchLastItem = async () => {
   `)
 };
 
+const deleteItem = function () {
+  const itemId = this.closest('.item-card').classList[1].split('-')[1];
+  const url = `/api/v1/items/${itemId}`;
+  const options = {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+  }
+
+  fetch(url, options)
+
+  this.closest('.item-card').remove();
+}
+
 const buttonToggle = () => $('.pack-it-button').prop('disabled', !($('.pack-it-input').val()));
 
 $('.pack-it-input').on('keypress', buttonToggle);
 $('.pack-it-button').on('click', packIt);
+$('.item-container').on('click', '.delete-card', deleteItem);
 
 fetchItems();

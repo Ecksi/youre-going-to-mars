@@ -13,7 +13,11 @@
 }
 
 body {
+  background: url('https://i.imgur.com/VlHoOna.gif');
+  background-repeat: no-repeat;
+  background-size: cover;
   font-size: 10px;
+  color: #fff;
 }
 
 body:before {
@@ -74,10 +78,24 @@ header {
   width: 70%;
 }
 
+
+@keyframes flash {
+    from {color: rgb(242, 107, 23);}
+    to {color: #BADA55;}
+}
+
 header h1 {
+  animation-name: flash;
+  animation-duration: 0.2s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-play-state: running;
+  color: #BADA55;
   font-size: 6em;
   margin: 0.5em 0;
   padding: 0;
+  
 }
 
 .pack-it-input {

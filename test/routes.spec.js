@@ -68,4 +68,18 @@ describe('API routes', () => {
     });
   });
 
+  describe('POST /api/v1/items', () => {
+    it('should post a new item to the database', done => {
+      chai.request(server)
+        .post('/api/v1/items')
+        .send({ name: 'Chicken' })
+        .end((error, response) => {
+          response.should.have.status(201);
+          response.should.be.json;
+          response.body.should.have.property('id');
+          response.body.id.should.equal(4);
+          done();
+        });
+    });
+  });
 });

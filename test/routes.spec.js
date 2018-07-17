@@ -98,14 +98,23 @@ describe('API routes', () => {
         });
     });
 
-    it('should return an empty array if the id for the item was not found', done => {
+    it('should return a error message if there is no name', done => {
+      chai.request(server)
+        .post('/api/v1/items')
+        .send({})
+        .end((error, response) => {
+          response.should.have.status(422);
+          response.text.should.equal('You forgot to enter a name');
+          done();
+        });
+    });
+
+    it('should have status of 404 if the id was not found', done => {
       chai.request(server)
         .get('/api/v1/items/193934')
         .end((error, response) => {
-          response.should.have.status(200);
+          response.should.have.status(404);
           response.should.be.json;
-          response.body.should.be.a('array');
-          response.body.length.should.equal(0);
           done();
         });
     });
@@ -127,6 +136,17 @@ describe('API routes', () => {
             });
         });
     });
+
+    it('should return a error message if there is no id', done => {
+      chai.request(server)
+        .put('/api/v1/items/1')
+        .send()
+        .end((error, response) => {
+          response.should.have.status(500);
+          response.text.should.equal('{"error":{}}');
+          done();
+        });
+    });
   });
 
   describe('DELETE /api/v1/items/:id', () => {
@@ -139,7 +159,7 @@ describe('API routes', () => {
           chai.request(server)
             .delete('/api/v1/items/3')
             .end((error, response) => {
-              response.should.have.status(202);
+              response.should.have.status(200);
               response.type.should.equal('application/json');
               response.body.should.have.property('id');
               response.body.id.should.equal('3');
@@ -151,6 +171,16 @@ describe('API routes', () => {
                   done();
                 });
             });
+        });
+    });
+
+    it('should return a error message if there is no id', done => {
+      chai.request(server)
+        .delete('/api/v1/items/1333')
+        .end((error, response) => {
+          response.should.have.status(404);
+          response.text.should.equal('{"error":"Item not found"}');
+          done();
         });
     });
   });

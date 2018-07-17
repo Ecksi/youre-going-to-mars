@@ -24,12 +24,18 @@ app.get('/api/v1/items/:id', (request, response) => {
   const { id } = request.params;
 
   database('items').select().where('id', id)
-    .then(items => response.status(200).json(items)[id])
+    .then(item => item.length 
+      ? response.status(200).json(item)[id] 
+      : response.status(404).json({ error: `Could not find item with id of ${id}`}))
     .catch(error => response.status(500).json({ error }));
 });
 
 app.post('/api/v1/items', (request, response) => {
   const { name } = request.body;
+
+  if (!name) {
+    return response.status(422).send('You forgot to enter a name');
+  }
   
   database('items').insert({ name: name }, 'id')
     .then(item => response.status(201).json({ id: item[0] }))
@@ -39,6 +45,10 @@ app.post('/api/v1/items', (request, response) => {
 app.put('/api/v1/items/:id', (request, response) => {
   const { id } = request.params;
   const { packed } = request.body;
+
+  if (!id) {
+    return response.status(422).send('You cannot pack this item');
+  }
 
   database('items').select().where({ id })
     .update('packed', packed)
@@ -50,7 +60,14 @@ app.delete('/api/v1/items/:id', (request, response) => {
   const { id } = request.params;
 
   database('items').where('id', id).del()
-    .then(() => response.status(202).json({'id': id}));
+    .then(item => {
+      if ( item > 0) {
+        response.status(200).json({'id': id});
+      } else {
+        response.status(404).json({error: 'Item not found'});
+      }
+    })
+    .catch (error => response.status(500).json({ error }));
 });
 
 module.exports = app;
